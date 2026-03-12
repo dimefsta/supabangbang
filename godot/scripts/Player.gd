@@ -8,7 +8,6 @@ var safe := false
 var safe_timer := 0.0
 
 func _physics_process(delta):
-	# Blink when safe (invincible after hit)
 	if safe:
 		safe_timer -= delta
 		modulate.a = 0.5

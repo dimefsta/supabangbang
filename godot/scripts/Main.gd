@@ -24,8 +24,8 @@ func _process(_delta):
 			_restart()
 		return
 
-	# Shoot harpoon with Space
-	if Input.is_action_just_pressed("ui_accept") and not harpoon_active:
+	# Shoot harpoon with Space bar
+	if Input.is_key_just_pressed(KEY_SPACE) and not harpoon_active:
 		_shoot_harpoon()
 
 	# Check player-ball collisions
@@ -35,7 +35,7 @@ func _process(_delta):
 func _shoot_harpoon():
 	harpoon_active = true
 	var harpoon = load("res://scenes/Harpoon.tscn").instantiate()
-	harpoon.position = player.position
+	harpoon.position = Vector2(player.position.x, player.position.y)
 	harpoons_node.add_child(harpoon)
 
 func _check_player_ball_collision():
@@ -67,7 +67,6 @@ func _restart():
 	player.reset_position()
 	player.safe = false
 	player.modulate.a = 1.0
-	# Clear all balls and harpoons
 	for child in balls_node.get_children():
 		child.queue_free()
 	for child in harpoons_node.get_children():
@@ -84,14 +83,11 @@ func _spawn_initial_ball():
 
 func add_score(points: int):
 	score += points
-
-	# Check win condition
 	if balls_node.get_child_count() == 0:
 		await get_tree().create_timer(0.3).timeout
 		_next_level()
 
 func _next_level():
-	# Spawn two balls for next level (harder)
 	for i in 2:
 		var ball = load("res://scenes/Ball.tscn").instantiate()
 		ball.position = Vector2(250 + i * 500, 100)
