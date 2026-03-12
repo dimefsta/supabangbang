@@ -20,28 +20,28 @@ func _process(_delta):
 	lives_label.text = "Lives: %d" % lives
 
 	if game_over:
-		if Input.is_action_just_pressed("ui_accept"):
+		if Input.is_key_just_pressed(KEY_ENTER):
 			_restart()
 		return
 
-	# Shoot harpoon with Space bar
+	# Space bar shoots harpoon
 	if Input.is_key_just_pressed(KEY_SPACE) and not harpoon_active:
 		_shoot_harpoon()
 
-	# Check player-ball collisions
+	# Player-ball collision
 	if not player.safe:
 		_check_player_ball_collision()
 
 func _shoot_harpoon():
 	harpoon_active = true
 	var harpoon = load("res://scenes/Harpoon.tscn").instantiate()
+	# Spawn at player center top
 	harpoon.position = Vector2(player.position.x, player.position.y)
 	harpoons_node.add_child(harpoon)
 
 func _check_player_ball_collision():
 	for ball in balls_node.get_children():
-		var dist = player.position.distance_to(ball.position)
-		if dist < ball.radius + 12:
+		if player.position.distance_to(ball.position) < ball.radius + 12:
 			_lose_life()
 			break
 
@@ -55,7 +55,7 @@ func _lose_life():
 
 func _trigger_game_over():
 	game_over = true
-	game_over_label.text = "GAME OVER\nScore: %d\nPress Space to Restart" % score
+	game_over_label.text = "GAME OVER\nScore: %d\nPress Enter to Restart" % score
 	game_over_label.visible = true
 
 func _restart():
