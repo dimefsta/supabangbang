@@ -1,0 +1,26 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes in [] on its own line
+;   param=value ; parameters are excluded from comments
+
+config_version=5
+
+[application]
+
+config/name="supabangbang"
+config/features=PackedStringArray("4.1", "GL Compatibility")
+config/main_scene="res://scenes/Main.tscn"
+boot_splash/bg_color=Color(0, 0, 0, 1)
+
+[display]
+
+window/size/viewport_width=1000
+window/size/viewport_height=700
+window/size/resizable=false
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
