@@ -1,116 +1,147 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>SupaBangBang - Retro Arcade Pang</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>SupaBangBang Arcade Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./hub.css" />
 </head>
 <body>
-  <!-- Rotate Device Modal (Forces Landscape on Mobile & Tablet) -->
-  <div class="rotate-device-modal" id="rotateModal">
-    <div class="rotate-modal-content">
-      <div class="rotate-phone-anim">
-        <span class="phone-icon">📱</span>
-        <span class="rotate-arrow">⟲</span>
-      </div>
-      <h2 class="rotate-title">SUPABANGBANG</h2>
-      <p class="rotate-subtitle">ΠΑΡΑΚΑΛΩ ΓΥΡΙΣΤΕ ΤΗ ΣΥΣΚΕΥΗ ΟΡΙΖΟΝΤΙΑ</p>
-      <p class="rotate-hint">Το παιχνίδι παίζεται αποκλειστικά σε οριζόντια προβολή (Landscape) για τεράστια οθόνη arcade!</p>
-      <button id="btnForceRotate" class="force-rotate-btn">⛶ ΕΝΑΡΞΗ ΣΕ FULLSCREEN</button>
-    </div>
-  </div>
+  <div class="arcade-hub">
+    <!-- Ambient Scanlines & Background Glows -->
+    <div class="hub-scanlines"></div>
+    <div class="ambient-glow cyan" style="top: 5%; left: 5%;"></div>
+    <div class="ambient-glow pink" style="bottom: 10%; right: 5%;"></div>
 
-  <!-- Arcade Main Frame -->
-  <div class="arcade-cabinet" id="arcadeCabinet">
-    <!-- Header / Marquee (Desktop only) -->
-    <header class="arcade-header">
-      <div class="logo-wrapper">
-        <span class="logo-badge">WORLD TOUR 1990</span>
-        <h1 class="logo-title">SUPA<span class="highlight">BANG</span>BANG</h1>
+    <!-- Header / Top Status -->
+    <header class="hub-header">
+      <div class="hub-top-bar">
+        <div class="hub-system-pill">
+          <span class="pulse-dot"></span>
+          <span class="pill-text">ARCADE CABINET READY • 2 EDITIONS LOADED</span>
+        </div>
+
+        <button id="btnAudioToggle" class="hub-audio-btn" title="Toggle Sound (M)">
+          <span id="audioIcon">🔊</span> <span id="audioText">SOUND ON</span>
+        </button>
       </div>
-      <div class="header-controls">
-        <button id="btnSound" class="arcade-btn-mini" title="Ήχος (M)">🔊</button>
-        <button id="btnPause" class="arcade-btn-mini" title="Παύση (P)">⏸️</button>
-        <button id="btnFullscreen" class="arcade-btn-mini" title="Πλήρης Οθόνη">⛶</button>
+
+      <div class="hub-title-group">
+        <h1 class="hub-main-title">
+          <span style="color: #00f0ff;">S</span><span style="color: #00e5ff;">U</span><span style="color: #38bdf8;">P</span><span style="color: #7dd3fc;">A</span>
+          <span style="color: #ffbe0b; margin-left: 6px;">B</span><span style="color: #fb5607;">A</span><span style="color: #ff007f;">N</span><span style="color: #ff0055;">G</span>
+          <span style="color: #ffbe0b; margin-left: 6px;">B</span><span style="color: #fb5607;">A</span><span style="color: #ff007f;">N</span><span style="color: #ff0055;">G</span>
+        </h1>
+        <p class="hub-subtitle">SELECT YOUR EDITION &amp; INSERT COIN</p>
       </div>
     </header>
 
-    <!-- Canvas Wrapper with CRT scanlines effect -->
-    <div class="canvas-wrapper" id="canvasWrapper">
-      <canvas id="gameCanvas" width="1000" height="700"></canvas>
-      <div class="scanlines"></div>
-
-      <!-- Floating HUD Touch Controls (Landscape Mobile & Tablet) -->
-      <div class="hud-touch-controls" id="touchControls">
-        <!-- Left: Movement Controls (Ergonomic thumb zone) -->
-        <div class="hud-left-pad">
-          <!-- Mode 1: Precision Arcade D-Pad (Default for Pang) -->
-          <div class="hud-dpad-cluster" id="hudDpad">
-            <button id="touchUp" class="dpad-btn dpad-up" data-key="ArrowUp">▲</button>
-            <div class="dpad-mid-row">
-              <button id="touchLeft" class="dpad-btn dpad-left" data-key="ArrowLeft">◀</button>
-              <div class="dpad-center-hub" id="btnToggleControlMode" title="Εναλλαγή Μοχλού / D-Pad">
-                <span class="hub-icon">🕹️</span>
-              </div>
-              <button id="touchRight" class="dpad-btn dpad-right" data-key="ArrowRight">▶</button>
+    <!-- Dual Edition Mode Selection Grid -->
+    <main class="hub-modes-container">
+      <!-- Card 1: 1st Edition (V1) - Clean, Simple, Unstyled -->
+      <a href="./v1/index.html" class="hub-mode-card card-v1" id="cardV1" data-mode="v1">
+        <div class="card-inner">
+          <div class="hub-card-header">
+            <div class="hub-card-edition">
+              <span class="hub-card-icon">🎯</span>
+              <h2 class="hub-card-title">1ST EDITION</h2>
             </div>
-            <button id="touchDown" class="dpad-btn dpad-down" data-key="ArrowDown">▼</button>
+            <span class="hub-card-badge">RAW &amp; UNSTYLED</span>
           </div>
 
-          <!-- Mode 2: Virtual Analog Joystick -->
-          <div class="hud-joystick-cluster" id="hudJoystick" style="display: none;">
-            <div class="joystick-base" id="joystickBase">
-              <div class="joy-guide arrow-up">▲</div>
-              <div class="joy-guide arrow-left">◀</div>
-              <div class="joy-guide arrow-right">▶</div>
-              <div class="joy-guide arrow-down">▼</div>
-              <div class="joystick-knob" id="joystickKnob">
-                <div class="knob-cap"></div>
-              </div>
+          <p class="hub-card-subtitle">Classic minimalist 1990 retro canvas edition</p>
+
+          <!-- V1 Mini Preview Canvas Graphic -->
+          <div class="hub-board-preview preview-v1">
+            <div class="v1-preview-scene">
+              <div class="v1-score-tag">SCORE: 1200 &nbsp; LIVES: 3</div>
+              <div class="v1-preview-ball"></div>
+              <div class="v1-preview-harpoon"></div>
+              <div class="v1-preview-player"></div>
             </div>
           </div>
+
+          <p class="hub-card-desc">
+            The pure, original state of the game from git history. Simple HTML5 canvas, authentic physics, and zero extra shaders.
+          </p>
+
+          <ul class="hub-card-features">
+            <li><span>◽</span> <strong>1000×700 Pure Canvas</strong></li>
+            <li><span>◽</span> <strong>Authentic Ball Splits</strong></li>
+            <li><span>◽</span> <strong>Classic Harpoon Physics</strong></li>
+            <li><span>◽</span> <strong>Zero Modern Shaders</strong></li>
+          </ul>
         </div>
 
-        <!-- Center Tools: Mode Switch & Pause -->
-        <div class="hud-center-tools">
-          <button id="btnSwitchCtrl" class="hud-tool-pill">🔀 D-PAD / 🕹️ MOXΛΟΣ</button>
-          <button id="btnMobilePause" class="hud-tool-pill">⏸️ PAUSE</button>
-          <button id="btnToggle2P" class="hud-tool-pill">1P MODE</button>
+        <div class="hub-card-actions">
+          <span class="hub-launch-btn">PLAY 1ST EDITION →</span>
+          <span class="hub-hotkey-hint">Press <kbd>1</kbd> to launch</span>
         </div>
+      </a>
 
-        <!-- Right: Elevated Arcade Push Button -->
-        <div class="hud-right-pad">
-          <button id="btnTouchFire" class="hud-fire-btn">
-            <div class="fire-bezel">
-              <div class="fire-core">
-                <span class="fire-icon">⚡</span>
-                <span class="fire-text">FIRE</span>
-              </div>
+      <!-- Card 2: Modern Version (V2) - Glowing Arcade / Modern UI -->
+      <a href="./v2/index.html" class="hub-mode-card card-v2" id="cardV2" data-mode="v2">
+        <div class="card-inner">
+          <div class="hub-card-header">
+            <div class="hub-card-edition">
+              <span class="hub-card-icon">⚡</span>
+              <h2 class="hub-card-title">MODERN VERSION</h2>
             </div>
-          </button>
-        </div>
-      </div>
-    </div>
+            <span class="hub-card-badge">CYBER ARCADE V2</span>
+          </div>
 
-    <!-- Controls Legend Footer (Desktop view) -->
-    <footer class="arcade-footer">
-      <div class="controls-legend">
-        <span class="legend-item"><kbd>◀</kbd><kbd>▶</kbd> Κίνηση</span>
-        <span class="legend-item"><kbd>▲</kbd><kbd>▼</kbd> Σκάλα</span>
-        <span class="legend-item"><kbd>SPACE</kbd> Καμάκι / Start</span>
-        <span class="legend-item"><kbd>P</kbd> Παύση</span>
-        <span class="legend-item"><kbd>M</kbd> Mute</span>
+          <p class="hub-card-subtitle">Neon CRT cabinet, touch controls &amp; stereo synth</p>
+
+          <!-- V2 Mini Preview Arcade Graphic -->
+          <div class="hub-board-preview preview-v2">
+            <div class="v2-preview-scene">
+              <div class="v2-marquee-tag">WORLD TOUR 1990 • CREDIT 00</div>
+              <div class="v2-preview-scanlines"></div>
+              <div class="v2-preview-ball large"></div>
+              <div class="v2-preview-ball small"></div>
+              <div class="v2-preview-laser"></div>
+              <div class="v2-preview-player"></div>
+            </div>
+          </div>
+
+          <p class="hub-card-desc">
+            Supercharged modern arcade experience featuring glowing CRT cabinet, touch D-pad &amp; joystick, 2P mode, and Greek arcade localization.
+          </p>
+
+          <ul class="hub-card-features">
+            <li><span>⚡</span> <strong>Cyber Arcade Cabinet</strong></li>
+            <li><span>🕹️</span> <strong>D-Pad &amp; Joystick HUD</strong></li>
+            <li><span>🔊</span> <strong>Retro Audio Synthesizer</strong></li>
+            <li><span>👥</span> <strong>1P &amp; 2P Co-Op Modes</strong></li>
+          </ul>
+        </div>
+
+        <div class="hub-card-actions">
+          <span class="hub-launch-btn">PLAY MODERN V2 ⚡</span>
+          <span class="hub-hotkey-hint">Press <kbd>2</kbd> to launch</span>
+        </div>
+      </a>
+    </main>
+
+    <!-- Footer -->
+    <footer class="hub-footer">
+      <div class="hub-footer-shortcuts">
+        <span>Shortcuts: </span>
+        <span class="shortcut-list">
+          <kbd>[1]</kbd> 1st Edition • <kbd>[2]</kbd> Modern V2 • <kbd>[M]</kbd> Mute Audio
+        </span>
       </div>
-      <div class="footer-status">
-        <span class="arcade-credit">CREDIT 00</span>
+      <div class="hub-footer-links">
+        <a href="https://github.com/dimefsta/supabangbang" target="_blank" rel="noopener noreferrer">
+          GitHub: dimefsta/supabangbang
+        </a>
       </div>
     </footer>
   </div>
 
-  <script src="main.js"></script>
+  <script src="hub.js"></script>
 </body>
 </html>

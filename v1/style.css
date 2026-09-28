@@ -1,0 +1,73 @@
+/* === CSS Reset === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+/* === Variables and Game Styles === */
+:root {
+  --bg-color: #111;
+  --text-color: #00ffff;
+  --player-color: #00ffff;
+  --ball-color: #ff007f;
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #222;
+  font-size: 0.9rem;
+}
+
+.nav-back {
+  color: var(--text-color);
+  text-decoration: none;
+  border: 1px solid var(--text-color);
+  padding: 4px 10px;
+  border-radius: 3px;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+}
+
+.nav-back:hover {
+  background: var(--text-color);
+  color: #000;
+}
+
+.edition-label {
+  color: #888;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.title {
+  margin-top: 15px;
+  font-size: 2rem;
+}
+
+canvas {
+  display: block;
+  margin: 15px auto;
+  border: 2px solid var(--text-color);
+  background: #000;
+  max-width: 96vw;
+  max-height: 80vh;
+  object-fit: contain;
+}

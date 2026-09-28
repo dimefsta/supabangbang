@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>SupaBangBang - Retro Arcade Pang</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Rotate Device Modal (Forces Landscape on Mobile & Tablet) -->
+  <div class="rotate-device-modal" id="rotateModal">
+    <div class="rotate-modal-content">
+      <div class="rotate-phone-anim">
+        <span class="phone-icon">📱</span>
+        <span class="rotate-arrow">⟲</span>
+      </div>
+      <h2 class="rotate-title">SUPABANGBANG</h2>
+      <p class="rotate-subtitle">ΠΑΡΑΚΑΛΩ ΓΥΡΙΣΤΕ ΤΗ ΣΥΣΚΕΥΗ ΟΡΙΖΟΝΤΙΑ</p>
+      <p class="rotate-hint">Το παιχνίδι παίζεται αποκλειστικά σε οριζόντια προβολή (Landscape) για τεράστια οθόνη arcade!</p>
+      <button id="btnForceRotate" class="force-rotate-btn">⛶ ΕΝΑΡΞΗ ΣΕ FULLSCREEN</button>
+    </div>
+  </div>
+
+  <!-- Arcade Main Frame -->
+  <div class="arcade-cabinet" id="arcadeCabinet">
+    <!-- Header / Marquee (Desktop only) -->
+    <header class="arcade-header">
+      <div class="logo-wrapper">
+        <span class="logo-badge">WORLD TOUR 1990</span>
+        <h1 class="logo-title">SUPA<span class="highlight">BANG</span>BANG</h1>
+      </div>
+      <div class="header-controls">
+        <a href="../index.html" class="arcade-btn-mini" title="Arcade Hub" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;padding:4px 8px;font-family:'Press Start 2P', monospace;color:#00ffff;">🏠 HUB</a>
+        <button id="btnSound" class="arcade-btn-mini" title="Ήχος (M)">🔊</button>
+        <button id="btnPause" class="arcade-btn-mini" title="Παύση (P)">⏸️</button>
+        <button id="btnFullscreen" class="arcade-btn-mini" title="Πλήρης Οθόνη">⛶</button>
+      </div>
+    </header>
+
+    <!-- Canvas Wrapper with CRT scanlines effect -->
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="gameCanvas" width="1000" height="700"></canvas>
+      <div class="scanlines"></div>
+
+      <!-- Floating HUD Touch Controls (Landscape Mobile & Tablet) -->
+      <div class="hud-touch-controls" id="touchControls">
+        <!-- Left: Movement Controls (Ergonomic thumb zone) -->
+        <div class="hud-left-pad">
+          <!-- Mode 1: Precision Arcade D-Pad (Default for Pang) -->
+          <div class="hud-dpad-cluster" id="hudDpad">
+            <button id="touchUp" class="dpad-btn dpad-up" data-key="ArrowUp">▲</button>
+            <div class="dpad-mid-row">
+              <button id="touchLeft" class="dpad-btn dpad-left" data-key="ArrowLeft">◀</button>
+              <div class="dpad-center-hub" id="btnToggleControlMode" title="Εναλλαγή Μοχλού / D-Pad">
+                <span class="hub-icon">🕹️</span>
+              </div>
+              <button id="touchRight" class="dpad-btn dpad-right" data-key="ArrowRight">▶</button>
+            </div>
+            <button id="touchDown" class="dpad-btn dpad-down" data-key="ArrowDown">▼</button>
+          </div>
+
+          <!-- Mode 2: Virtual Analog Joystick -->
+          <div class="hud-joystick-cluster" id="hudJoystick" style="display: none;">
+            <div class="joystick-base" id="joystickBase">
+              <div class="joy-guide arrow-up">▲</div>
+              <div class="joy-guide arrow-left">◀</div>
+              <div class="joy-guide arrow-right">▶</div>
+              <div class="joy-guide arrow-down">▼</div>
+              <div class="joystick-knob" id="joystickKnob">
+                <div class="knob-cap"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Tools: Mode Switch & Pause -->
+        <div class="hud-center-tools">
+          <button id="btnSwitchCtrl" class="hud-tool-pill">🔀 D-PAD / 🕹️ MOXΛΟΣ</button>
+          <button id="btnMobilePause" class="hud-tool-pill">⏸️ PAUSE</button>
+          <button id="btnToggle2P" class="hud-tool-pill">1P MODE</button>
+        </div>
+
+        <!-- Right: Elevated Arcade Push Button -->
+        <div class="hud-right-pad">
+          <button id="btnTouchFire" class="hud-fire-btn">
+            <div class="fire-bezel">
+              <div class="fire-core">
+                <span class="fire-icon">⚡</span>
+                <span class="fire-text">FIRE</span>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls Legend Footer (Desktop view) -->
+    <footer class="arcade-footer">
+      <div class="controls-legend">
+        <span class="legend-item"><kbd>◀</kbd><kbd>▶</kbd> Κίνηση</span>
+        <span class="legend-item"><kbd>▲</kbd><kbd>▼</kbd> Σκάλα</span>
+        <span class="legend-item"><kbd>SPACE</kbd> Καμάκι / Start</span>
+        <span class="legend-item"><kbd>P</kbd> Παύση</span>
+        <span class="legend-item"><kbd>M</kbd> Mute</span>
+      </div>
+      <div class="footer-status">
+        <span class="arcade-credit">CREDIT 00</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
