@@ -1,15 +1,17 @@
 /* ==========================================================================
-   SUPABANGBANG ARCADE HUB - STYLESHEET
+   SUPABANGBANG ARCADE HUB - ENERGETIC ACTION ARCADE THEME
    ========================================================================== */
 
 :root {
   --font-arcade: 'Press Start 2P', monospace, sans-serif;
   --font-ui: 'Rajdhani', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --neon-cyan: #00f0ff;
-  --neon-pink: #ff007f;
-  --neon-yellow: #ffbe0b;
-  --neon-green: #00e676;
-  --bg-dark: #070913;
+  --action-orange: #ff5500;
+  --action-fire: #ff3d00;
+  --action-crimson: #ff1744;
+  --action-lime: #00e676;
+  --action-amber: #ffd600;
+  --action-gold: #ffab00;
+  --bg-dark: #08090d;
 }
 
 * {
@@ -24,7 +26,7 @@ html, body {
   min-height: 100%;
   background-color: var(--bg-dark);
   font-family: var(--font-ui);
-  color: #e2e8f0;
+  color: #f4f4f5;
   overflow-x: hidden;
 }
 
@@ -36,24 +38,24 @@ body {
   padding: 12px;
 }
 
-/* Background Ambient Glows */
+/* Background Ambient Glows - Fiery Action Palette */
 .ambient-glow {
   position: absolute;
-  width: 320px;
-  height: 320px;
+  width: 340px;
+  height: 340px;
   border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.15;
+  filter: blur(110px);
+  opacity: 0.16;
   pointer-events: none;
   z-index: 0;
 }
 
-.ambient-glow.cyan {
-  background: var(--neon-cyan);
+.ambient-glow.orange {
+  background: var(--action-fire);
 }
 
-.ambient-glow.pink {
-  background: var(--neon-pink);
+.ambient-glow.lime {
+  background: var(--action-lime);
 }
 
 /* Main Hub Container */
@@ -67,24 +69,24 @@ body {
   flex-direction: column;
   justify-content: space-between;
   padding: 20px 24px;
-  background: radial-gradient(circle at 50% 10%, #151c35 0%, #090c18 65%, #05070d 100%);
+  background: radial-gradient(circle at 50% 10%, #20130e 0%, #120e16 45%, #08090d 100%);
   border-radius: 16px;
-  border: 1px solid rgba(0, 240, 255, 0.2);
+  border: 1px solid rgba(255, 85, 0, 0.35);
   box-shadow: 
-    0 0 50px rgba(0, 0, 0, 0.9),
-    0 0 0 1px rgba(0, 240, 255, 0.12),
-    inset 0 0 35px rgba(0, 0, 0, 0.6);
+    0 0 60px rgba(0, 0, 0, 0.95),
+    0 0 35px rgba(255, 60, 0, 0.15),
+    inset 0 0 45px rgba(0, 0, 0, 0.75);
   overflow: hidden;
   z-index: 1;
 }
 
-/* Subtle CRT Scanlines */
+/* Subtle CRT Scanlines with Warm Action Tone */
 .hub-scanlines {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.3) 50%
+    rgba(25, 14, 10, 0) 50%, 
+    rgba(0, 0, 0, 0.35) 50%
   );
   background-size: 100% 4px;
   pointer-events: none;
@@ -112,22 +114,22 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(0, 240, 255, 0.08);
-  border: 1px solid rgba(0, 240, 255, 0.3);
+  background: rgba(255, 85, 0, 0.1);
+  border: 1px solid rgba(255, 85, 0, 0.45);
   padding: 5px 12px;
   border-radius: 20px;
   font-family: var(--font-arcade);
   font-size: 0.68rem;
   letter-spacing: 1px;
-  color: var(--neon-cyan);
+  color: var(--action-gold);
 }
 
 .hub-system-pill .pulse-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--neon-green);
-  box-shadow: 0 0 8px var(--neon-green);
+  background: var(--action-crimson);
+  box-shadow: 0 0 8px var(--action-crimson);
   animation: hub-pulse 1.6s infinite ease-in-out;
   flex-shrink: 0;
 }
@@ -139,8 +141,8 @@ body {
 
 .hub-audio-btn {
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #e2e8f0;
+  border: 1px solid rgba(255, 85, 0, 0.3);
+  color: #f4f4f5;
   border-radius: 8px;
   padding: 5px 12px;
   font-size: 0.85rem;
@@ -154,8 +156,9 @@ body {
 }
 
 .hub-audio-btn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 85, 0, 0.15);
+  border-color: var(--action-orange);
+  box-shadow: 0 0 10px rgba(255, 85, 0, 0.4);
   transform: translateY(-1px);
 }
 
@@ -174,7 +177,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  text-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+  text-shadow: 0 0 25px rgba(255, 85, 0, 0.55), 0 0 50px rgba(255, 23, 68, 0.35);
 }
 
 .hub-main-title span {
@@ -189,7 +192,7 @@ body {
 .hub-subtitle {
   font-family: var(--font-arcade);
   font-size: clamp(0.72rem, 1.8vw, 0.95rem);
-  color: #94a3b8;
+  color: var(--action-gold);
   letter-spacing: 2px;
   margin-top: 6px;
   text-transform: uppercase;
@@ -324,7 +327,7 @@ body {
 }
 
 /* ==========================================================================
-   CARD 1: 1ST EDITION (RAW / MINIMALIST / PURE)
+   CARD 1: 1ST EDITION (RAW / MINIMALIST / PURE RETRO)
    ========================================================================== */
 .hub-mode-card.card-v1 {
   background: #ffffff;
@@ -386,7 +389,7 @@ body {
   border: 1px solid #cbd5e1;
 }
 
-/* V1 Mini Canvas Preview */
+/* V1 Mini Canvas Preview (Authentic 1990 Pang) */
 .preview-v1 {
   height: 90px;
   background: #000;
@@ -459,45 +462,44 @@ body {
 }
 
 /* ==========================================================================
-   CARD 2: MODERN VERSION (V2 - CYBER ARCADE)
+   CARD 2: MODERN VERSION (V2 - ACTION ARCADE THEME)
    ========================================================================== */
 .hub-mode-card.card-v2 {
-  background: rgba(14, 19, 36, 0.88);
-  border: 2px solid rgba(0, 240, 255, 0.4);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 240, 255, 0.12);
+  background: radial-gradient(circle at 50% 15%, #221415 0%, #140e16 65%, #0b0a10 100%);
+  border: 2px solid rgba(255, 85, 0, 0.5);
+  box-shadow: 0 10px 32px rgba(255, 60, 0, 0.16);
 }
 
 .hub-mode-card.card-v2:hover {
-  border-color: var(--neon-cyan);
-  box-shadow: 0 16px 40px rgba(0, 240, 255, 0.25);
+  border-color: var(--action-orange);
+  box-shadow: 0 16px 45px rgba(255, 85, 0, 0.35);
 }
 
 .hub-mode-card.card-v2 .hub-card-title {
   color: #ffffff;
   font-family: var(--font-arcade);
   font-size: 1.15rem;
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  text-shadow: 0 0 12px rgba(255, 85, 0, 0.7);
 }
 
 .hub-mode-card.card-v2 .hub-card-badge {
-  background: rgba(0, 240, 255, 0.12);
-  color: var(--neon-cyan);
-  border: 1px solid rgba(0, 240, 255, 0.4);
+  background: rgba(255, 85, 0, 0.16);
+  color: var(--action-gold);
+  border: 1px solid rgba(255, 85, 0, 0.5);
   font-family: var(--font-arcade);
   font-size: 0.6rem;
 }
 
 .hub-mode-card.card-v2 .hub-card-subtitle {
-  color: #7dd3fc;
+  color: var(--action-gold);
 }
 
 .hub-mode-card.card-v2 .hub-card-desc {
-  color: #cbd5e1;
+  color: #e4e4e7;
 }
 
 .hub-mode-card.card-v2 .hub-card-features li {
-  color: #94a3b8;
+  color: #a1a1aa;
 }
 
 .hub-mode-card.card-v2 .hub-card-features strong {
@@ -505,39 +507,39 @@ body {
 }
 
 .hub-mode-card.card-v2 .hub-launch-btn {
-  background: linear-gradient(135deg, #00f0ff 0%, #0088ff 100%);
-  color: #070913;
+  background: linear-gradient(135deg, #ff1744 0%, #ff5500 50%, #ff9100 100%);
+  color: #ffffff;
   font-family: var(--font-arcade);
   font-size: 0.85rem;
   letter-spacing: 1px;
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 20px rgba(255, 85, 0, 0.55);
 }
 
 .hub-mode-card.card-v2:hover .hub-launch-btn {
-  background: linear-gradient(135deg, #38bdf8 0%, #00d4ff 100%);
-  box-shadow: 0 0 24px rgba(0, 240, 255, 0.7);
+  background: linear-gradient(135deg, #ff3d00 0%, #ff6d00 50%, #ffd600 100%);
+  box-shadow: 0 0 30px rgba(255, 85, 0, 0.85);
   transform: translateY(-1px);
 }
 
 .hub-mode-card.card-v2 .hub-hotkey-hint {
-  color: #94a3b8;
+  color: #a1a1aa;
 }
 
 .hub-mode-card.card-v2 .hub-hotkey-hint kbd {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--neon-cyan);
-  border: 1px solid rgba(0, 240, 255, 0.3);
+  background: rgba(255, 85, 0, 0.15);
+  color: var(--action-amber);
+  border: 1px solid rgba(255, 85, 0, 0.4);
 }
 
-/* V2 Mini Arcade Preview */
+/* V2 Mini Arcade Preview - Action Style */
 .preview-v2 {
   height: 90px;
-  background: radial-gradient(circle at 50% 30%, #1a233e 0%, #0b0f1d 100%);
-  border: 2px solid rgba(0, 240, 255, 0.5);
+  background: radial-gradient(circle at 50% 30%, #29171b 0%, #0e0a12 100%);
+  border: 2px solid rgba(255, 85, 0, 0.6);
   border-radius: 6px;
   position: relative;
   overflow: hidden;
-  box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.2);
+  box-shadow: inset 0 0 18px rgba(255, 85, 0, 0.25);
   padding: 6px 10px;
 }
 
@@ -553,9 +555,9 @@ body {
   left: 2px;
   font-family: var(--font-arcade);
   font-size: 0.55rem;
-  color: var(--neon-yellow);
+  color: var(--action-amber);
   letter-spacing: 1px;
-  text-shadow: 0 0 8px rgba(255, 190, 11, 0.6);
+  text-shadow: 0 0 8px rgba(255, 214, 0, 0.7);
 }
 
 .v2-preview-scanlines {
@@ -566,6 +568,7 @@ body {
   pointer-events: none;
 }
 
+/* Red Bouncing Ball */
 .v2-preview-ball.large {
   position: absolute;
   top: 18px;
@@ -573,11 +576,12 @@ body {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #38bdf8 0%, #0284c7 60%, #0369a1 100%);
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.7);
+  background: radial-gradient(circle at 30% 30%, #ff5252 0%, #ff1744 60%, #880e4f 100%);
+  box-shadow: 0 0 14px rgba(255, 23, 68, 0.85);
   animation: v2-bounce-1 2.2s infinite ease-in-out;
 }
 
+/* Lime Bouncing Ball */
 .v2-preview-ball.small {
   position: absolute;
   top: 24px;
@@ -585,8 +589,8 @@ body {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #f472b6 0%, #e11d48 60%, #be123c 100%);
-  box-shadow: 0 0 10px rgba(255, 0, 127, 0.8);
+  background: radial-gradient(circle at 30% 30%, #69f0ae 0%, #00e676 60%, #00701a 100%);
+  box-shadow: 0 0 12px rgba(0, 230, 118, 0.85);
   animation: v2-bounce-2 1.8s infinite ease-in-out;
 }
 
@@ -600,25 +604,27 @@ body {
   50% { transform: translateY(0); }
 }
 
+/* Polished Buster Bros Avatar in Preview */
 .v2-preview-player {
   position: absolute;
   bottom: 0;
-  left: calc(50% - 22px);
-  width: 44px;
-  height: 14px;
-  background: linear-gradient(180deg, #00f0ff 0%, #0088ff 100%);
-  border-radius: 3px;
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+  left: calc(50% - 20px);
+  width: 40px;
+  height: 18px;
+  background: linear-gradient(180deg, #ff1e27 0%, #b91c1c 100%);
+  border-radius: 4px 4px 2px 2px;
+  border-top: 3px solid #ff7700;
+  box-shadow: 0 0 12px rgba(255, 85, 0, 0.7);
 }
 
 .v2-preview-laser {
   position: absolute;
-  bottom: 14px;
+  bottom: 18px;
   left: 50%;
   width: 3px;
   height: 42px;
-  background: linear-gradient(180deg, #ffffff 0%, #00f0ff 100%);
-  box-shadow: 0 0 8px #00f0ff;
+  background: linear-gradient(180deg, #ffffff 0%, #ffd600 50%, #ff5500 100%);
+  box-shadow: 0 0 10px #ff5500;
   animation: v2-laser-burst 2.2s infinite ease-out;
 }
 
@@ -638,26 +644,26 @@ body {
   align-items: center;
   padding-top: 14px;
   font-size: 0.8rem;
-  color: #64748b;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #71717a;
+  border-top: 1px solid rgba(255, 85, 0, 0.18);
   margin-top: 8px;
 }
 
 .hub-footer-shortcuts kbd {
-  background: rgba(255, 255, 255, 0.08);
-  color: #cbd5e1;
+  background: rgba(255, 85, 0, 0.15);
+  color: var(--action-amber);
   padding: 1px 5px;
   border-radius: 3px;
 }
 
 .hub-footer-links a {
-  color: #94a3b8;
+  color: #a1a1aa;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .hub-footer-links a:hover {
-  color: var(--neon-cyan);
+  color: var(--action-orange);
 }
 
 /* ==========================================================================

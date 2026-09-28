@@ -215,12 +215,12 @@ const BALL_TIERS = {
 
 // Powerup types
 const POWERUP_TYPES = [
-  { id: "DOUBLE", icon: "⮁⮁", color: "#38bdf8", name: "Διπλό Καμάκι", weight: 30 },
+  { id: "DOUBLE", icon: "🔱", color: "#f97316", name: "Double Harpoon", weight: 30 },
   { id: "HOOK",   icon: "⚓",  color: "#f59e0b", name: "Sticky Hook",  weight: 25 },
   { id: "GUN",    icon: "⚡",  color: "#ec4899", name: "Vulcan Gun",   weight: 20 },
   { id: "CLOCK",  icon: "⏱️", color: "#818cf8", name: "Time Freeze",  weight: 15 },
   { id: "DYNAMITE",icon: "🧨", color: "#ef4444", name: "Dynamite",     weight: 10 },
-  { id: "SHIELD", icon: "🛡️", color: "#10b981", name: "Ασπίδα",       weight: 15 },
+  { id: "SHIELD", icon: "🛡️", color: "#10b981", name: "Shield",        weight: 15 },
   { id: "LIFE",   icon: "❤️",  color: "#f43f5e", name: "Extra Life",   weight: 5 },
 ];
 
@@ -410,8 +410,8 @@ class Player {
   }
 }
 
-let player1 = new Player(1, "Player 1", "#2563eb", "#d97706", 478);
-let player2 = new Player(2, "Player 2", "#dc2626", "#059669", 560);
+let player1 = new Player(1, "Player 1", "#ff1e27", "#ff7700", 478);
+let player2 = new Player(2, "Player 2", "#00e676", "#ffd600", 560);
 
 // Key state tracker
 const keys = {};
@@ -1534,6 +1534,19 @@ function createBlockDebris(x, y) {
   }
 }
 
+function createDustParticle(x, y) {
+  particles.push({
+    x: x,
+    y: y,
+    vx: (Math.random() - 0.5) * 1.5,
+    vy: -Math.random() * 1.0 - 0.3,
+    radius: 1.5 + Math.random() * 2.0,
+    color: "#ff9100",
+    alpha: 0.55,
+    life: 0.28
+  });
+}
+
 function createFloatingText(text, x, y, color = "#fff") {
   floatingTexts.push({
     text: text,
@@ -1763,7 +1776,7 @@ function drawBlocks() {
       ctx.strokeStyle = "#94a3b8";
       ctx.lineWidth = 2;
       ctx.strokeRect(b.x, b.y, b.w, b.h);
-      ctx.fillStyle = "#38bdf8";
+      ctx.fillStyle = "#f59e0b";
       ctx.fillRect(b.x, b.y, b.w, 3);
     }
   });
@@ -1855,82 +1868,255 @@ function drawPlayer(p) {
   if (p.lives <= 0) return;
 
   ctx.save();
-  // Safe / Invincible Blinking
-  if (p.safe && Math.floor(Date.now() / 100) % 2 === 0) {
-    ctx.globalAlpha = 0.35;
-  }
 
   const cx = p.x + p.width / 2;
   const cy = p.y + p.height / 2;
 
+  // Dynamic Contact Shadow on Floor
+  if (!p.isClimbing && p.y + p.height >= FLOOR_Y - 4) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+    ctx.beginPath();
+    ctx.ellipse(cx, FLOOR_Y - 1, 17, 4.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Safe / Invincible Shimmer Effect (high-tech chromatic aura)
+  if (p.safe) {
+    const blinkCycle = Math.floor(Date.now() / 90) % 3;
+    if (blinkCycle === 0) {
+      ctx.globalAlpha = 0.35;
+    } else if (blinkCycle === 1) {
+      ctx.shadowColor = "#ffd600";
+      ctx.shadowBlur = 12;
+      ctx.globalAlpha = 0.88;
+    } else {
+      ctx.globalAlpha = 0.65;
+    }
+  }
+
+  // Action Dust Puffs when sprinting
+  if (p.dx !== 0 && !p.isClimbing && Math.random() < 0.28) {
+    createDustParticle(
+      p.facing === 1 ? p.x + 4 : p.x + p.width - 4,
+      p.y + p.height - 3
+    );
+  }
+
   // Draw Shield Bubble if active
   if (p.hasShield) {
-    const shieldGrad = ctx.createRadialGradient(cx, cy, 15, cx, cy, 34);
-    shieldGrad.addColorStop(0, "rgba(16, 185, 129, 0.1)");
-    shieldGrad.addColorStop(0.8, "rgba(16, 185, 129, 0.4)");
-    shieldGrad.addColorStop(1, "rgba(52, 211, 153, 0.8)");
+    const shieldTime = Date.now() / 300;
+    const pulseRadius = 33 + Math.sin(shieldTime * 2) * 2;
+    const shieldGrad = ctx.createRadialGradient(cx, cy, 14, cx, cy, pulseRadius);
+    shieldGrad.addColorStop(0, "rgba(0, 230, 118, 0.1)");
+    shieldGrad.addColorStop(0.7, "rgba(0, 230, 118, 0.38)");
+    shieldGrad.addColorStop(1, "rgba(118, 255, 3, 0.9)");
     ctx.fillStyle = shieldGrad;
     ctx.beginPath();
-    ctx.arc(cx, cy, 32, 0, Math.PI * 2);
+    ctx.arc(cx, cy, pulseRadius, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "#34d399";
-    ctx.lineWidth = 2;
+
+    ctx.strokeStyle = "#00e676";
+    ctx.lineWidth = 2.5;
     ctx.stroke();
+
+    // Shield Orbiting Spark
+    const sparkX = cx + Math.cos(shieldTime * 3) * (pulseRadius - 2);
+    const sparkY = cy + Math.sin(shieldTime * 3) * (pulseRadius - 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(sparkX, sparkY, 3, 0, Math.PI * 2);
+    ctx.fill();
   }
 
-  // Player Character Spriting (Pang Explorer)
-  // Legs animation
-  ctx.fillStyle = "#1e293b";
+  // ==========================================
+  // 1. LEGS & TACTICAL BOOTS
+  // ==========================================
+  const pantsColor = "#1a1f2c";
+  const pantsHighlight = "#2d3748";
+  const bootColor = "#090a0f";
+  const bootRim = p.hatColor;
+
   if (p.isClimbing) {
-    // Climbing legs
-    const legOffset = (Math.floor(p.y / 8) % 2 === 0 ? 4 : -4);
-    ctx.fillRect(p.x + 10, p.y + 36, 8, 18 + legOffset);
-    ctx.fillRect(p.x + 26, p.y + 36, 8, 18 - legOffset);
+    const legOffset = (Math.floor(p.y / 8) % 2 === 0 ? 5 : -5);
+    // Left Leg
+    ctx.fillStyle = pantsColor;
+    ctx.fillRect(p.x + 9, p.y + 36, 10, 15 + legOffset);
+    ctx.fillStyle = bootColor;
+    ctx.fillRect(p.x + 8, p.y + 49 + legOffset, 12, 6);
+    // Right Leg
+    ctx.fillStyle = pantsColor;
+    ctx.fillRect(p.x + 25, p.y + 36, 10, 15 - legOffset);
+    ctx.fillStyle = bootColor;
+    ctx.fillRect(p.x + 24, p.y + 49 - legOffset, 12, 6);
   } else {
-    // Walking / Idle legs
-    const legSwing = p.dx !== 0 ? (p.walkFrame === 1 ? -4 : p.walkFrame === 3 ? 4 : 0) : 0;
-    ctx.fillRect(p.x + 8 + legSwing, p.y + 36, 10, 18);
-    ctx.fillRect(p.x + 24 - legSwing, p.y + 36, 10, 18);
+    const legSwing = p.dx !== 0 ? (p.walkFrame === 1 ? -5 : p.walkFrame === 3 ? 5 : 0) : 0;
+    // Left leg
+    ctx.fillStyle = pantsColor;
+    ctx.fillRect(p.x + 7 + legSwing, p.y + 36, 11, 13);
+    ctx.fillStyle = pantsHighlight;
+    ctx.fillRect(p.x + 9 + legSwing, p.y + 38, 3, 6); // Knee highlight
+    ctx.fillStyle = bootColor;
+    ctx.fillRect(p.x + 6 + legSwing, p.y + 48, 13, 7); // Combat boot
+    ctx.fillStyle = bootRim;
+    ctx.fillRect(p.x + 6 + legSwing, p.y + 53, 13, 2); // Sole rim
+
+    // Right leg
+    ctx.fillStyle = pantsColor;
+    ctx.fillRect(p.x + 25 - legSwing, p.y + 36, 11, 13);
+    ctx.fillStyle = pantsHighlight;
+    ctx.fillRect(p.x + 27 - legSwing, p.y + 38, 3, 6); // Knee highlight
+    ctx.fillStyle = bootColor;
+    ctx.fillRect(p.x + 24 - legSwing, p.y + 48, 13, 7); // Combat boot
+    ctx.fillStyle = bootRim;
+    ctx.fillRect(p.x + 24 - legSwing, p.y + 53, 13, 2); // Sole rim
   }
 
-  // Torso / Vest
+  // ==========================================
+  // 2. HEROIC ACTION VEST & INNER SHIRT
+  // ==========================================
+  // Vest Base
   ctx.fillStyle = p.color;
-  ctx.fillRect(p.x + 8, p.y + 16, 28, 22);
+  ctx.fillRect(p.x + 7, p.y + 16, 30, 20);
 
-  // Explorer Belt & Buckle
-  ctx.fillStyle = "#78350f";
-  ctx.fillRect(p.x + 8, p.y + 32, 28, 5);
-  ctx.fillStyle = "#fbbf24";
-  ctx.fillRect(p.x + 19, p.y + 32, 6, 5);
+  // Vest Shoulder Highlights
+  ctx.fillStyle = "rgba(255, 255, 255, 0.32)";
+  ctx.fillRect(p.x + 7, p.y + 16, 30, 3);
 
-  // Head & Face
-  ctx.fillStyle = "#fbcfe8";
+  // Vest Shadow Contours
+  ctx.fillStyle = "rgba(0, 0, 0, 0.28)";
+  ctx.fillRect(p.x + 7, p.y + 32, 30, 4);
+
+  // Crisp White Athletic Undershirt (V-Neck Center)
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(p.x + 17, p.y + 17, 10, 15);
+  ctx.fillStyle = "#e2e8f0";
+  ctx.fillRect(p.x + 19, p.y + 20, 6, 12);
+
+  // Gold Zipper / Badge Accent
+  ctx.fillStyle = "#ffd600";
+  ctx.fillRect(p.x + 21, p.y + 18, 2, 8);
+
+  // ==========================================
+  // 3. TACTICAL UTILITY BELT
+  // ==========================================
+  ctx.fillStyle = "#3e1f0b"; // Rich leather
+  ctx.fillRect(p.x + 6, p.y + 33, 32, 5);
+
+  // Utility Pouches
+  ctx.fillStyle = "#5c2c0e";
+  ctx.fillRect(p.x + 7, p.y + 32, 5, 6);
+  ctx.fillRect(p.x + 32, p.y + 32, 5, 6);
+
+  // Gleaming Gold Belt Buckle
+  ctx.fillStyle = "#ffd600";
+  ctx.fillRect(p.x + 18, p.y + 32, 8, 6);
+  ctx.fillStyle = "#fffbeb";
+  ctx.fillRect(p.x + 20, p.y + 33, 4, 4);
+
+  // ==========================================
+  // 4. HEAD, FACE & EXPRESSIVE EYES
+  // ==========================================
+  // Face Base (Warm Heroic Skin)
+  ctx.fillStyle = "#fed7aa";
   ctx.fillRect(p.x + 12, p.y + 6, 20, 14);
 
-  // Eyes (look in facing direction)
-  ctx.fillStyle = "#0f172a";
+  // Cheek warmth
+  ctx.fillStyle = "rgba(244, 63, 94, 0.35)";
+  ctx.fillRect(p.x + (p.facing === 1 ? 22 : 14), p.y + 14, 5, 3);
+
+  // Hair Bangs peeking out
+  ctx.fillStyle = "#3e1f0b";
+  ctx.fillRect(p.x + 11, p.y + 7, 4, 6);
+  ctx.fillRect(p.x + 29, p.y + 7, 4, 6);
+
+  // Expressive Arcade Eyes
   if (!p.isClimbing) {
-    const eyeX = p.facing === 1 ? p.x + 22 : p.x + 16;
-    ctx.fillRect(eyeX, p.y + 10, 4, 4);
+    const eyeX = p.facing === 1 ? p.x + 21 : p.x + 15;
+    // Eye Dark Base
+    ctx.fillStyle = "#090a0f";
+    ctx.fillRect(eyeX, p.y + 10, 5, 5);
+    // Specular Catchlight Highlight (Bright white gleam)
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(eyeX + (p.facing === 1 ? 2 : 1), p.y + 10, 2, 2);
   }
 
-  // Safari Explorer Hat
+  // ==========================================
+  // 5. HEROIC ACTION CAP (WITH VISOR & INSIGNIA)
+  // ==========================================
+  // Cap Visor / Brim (Curved forward)
   ctx.fillStyle = p.hatColor;
-  ctx.fillRect(p.x + 4, p.y + 4, 36, 5); // Hat Brim
-  ctx.fillRect(p.x + 10, p.y - 2, 24, 7); // Hat Crown
-  ctx.fillStyle = "#78350f";
-  ctx.fillRect(p.x + 10, p.y + 3, 24, 2); // Hat Ribbon
+  const brimX = p.facing === 1 ? p.x + 7 : p.x + 3;
+  ctx.fillRect(brimX, p.y + 4, 34, 5);
 
-  // Arms & Harpoon Gun
+  // Visor Top Specular Highlight
+  ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+  ctx.fillRect(brimX + 2, p.y + 4, 30, 2);
+
+  // Cap Crown
+  ctx.fillStyle = p.hatColor;
+  ctx.fillRect(p.x + 9, p.y - 3, 26, 8);
+
+  // Crown Band
+  ctx.fillStyle = "#1e2430";
+  ctx.fillRect(p.x + 9, p.y + 2, 26, 3);
+
+  // Gold Star / Emblem on Cap
+  ctx.fillStyle = "#ffd600";
+  ctx.fillRect(p.x + 20, p.y - 1, 4, 4);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(p.x + 21, p.y, 2, 2);
+
+  // ==========================================
+  // 6. ARMS, GLOVES & HARPOON LAUNCHER
+  // ==========================================
   if (p.shootingPose) {
-    // Arms raised aiming up!
+    // Both arms raised gripping the heavy harpoon launcher!
     ctx.fillStyle = p.color;
-    ctx.fillRect(p.x + 16, p.y + 8, 12, 10);
-    ctx.fillStyle = "#94a3b8";
-    ctx.fillRect(p.x + 19, p.y - 8, 6, 16); // Gun barrel
+    ctx.fillRect(p.x + 13, p.y + 7, 8, 12);
+    ctx.fillRect(p.x + 23, p.y + 7, 8, 12);
+
+    // Tactical Gloves
+    ctx.fillStyle = "#18181b";
+    ctx.fillRect(p.x + 14, p.y + 4, 6, 5);
+    ctx.fillRect(p.x + 24, p.y + 4, 6, 5);
+
+    // Harpoon Launcher Rifle (Gunmetal & Gold)
+    ctx.fillStyle = "#334155";
+    ctx.fillRect(p.x + 18, p.y - 14, 8, 22); // Main barrel
+    ctx.fillStyle = "#64748b";
+    ctx.fillRect(p.x + 19, p.y - 12, 6, 18); // Barrel chamber
+
+    // Gold Reinforcement Rings
+    ctx.fillStyle = "#ffd600";
+    ctx.fillRect(p.x + 17, p.y - 8, 10, 2);
+    ctx.fillRect(p.x + 17, p.y - 14, 10, 2);
+
+    // Glowing Laser Target Diode
+    ctx.fillStyle = "#ff1744";
+    ctx.fillRect(p.x + 21, p.y - 16, 2, 3);
+
+    // Energetic Muzzle Flash Spark!
+    ctx.fillStyle = "#ffd600";
+    ctx.beginPath();
+    ctx.arc(p.x + 22, p.y - 18, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(p.x + 22, p.y - 18, 2.5, 0, Math.PI * 2);
+    ctx.fill();
   } else if (!p.isClimbing) {
+    const armX = p.facing === 1 ? p.x + 27 : p.x + 6;
+    // Arm Sleeve
     ctx.fillStyle = p.color;
-    ctx.fillRect(p.x + (p.facing === 1 ? 26 : 6), p.y + 20, 10, 12);
+    ctx.fillRect(armX, p.y + 19, 10, 11);
+    // Tactical Glove
+    ctx.fillStyle = "#18181b";
+    ctx.fillRect(armX + (p.facing === 1 ? 2 : 0), p.y + 28, 8, 6);
+    // Holstered Harpoon Grip
+    ctx.fillStyle = "#475569";
+    ctx.fillRect(armX + (p.facing === 1 ? 4 : 2), p.y + 31, 4, 7);
+    ctx.fillStyle = "#ffd600";
+    ctx.fillRect(armX + (p.facing === 1 ? 4 : 2), p.y + 30, 4, 2);
   }
 
   ctx.restore();
@@ -1983,22 +2169,22 @@ function drawParticles() {
 function drawHUD() {
   // Top HUD Bar Background
   const hudGrad = ctx.createLinearGradient(0, 0, 0, CEILING_Y);
-  hudGrad.addColorStop(0, "#090d16");
-  hudGrad.addColorStop(1, "#121824");
+  hudGrad.addColorStop(0, "#08090f");
+  hudGrad.addColorStop(1, "#12141e");
   ctx.fillStyle = hudGrad;
   ctx.fillRect(0, 0, CANVAS_WIDTH, CEILING_Y - 4);
 
-  // Neon Divider line under HUD
-  ctx.fillStyle = "#00f0ff";
+  // Blazing Orange/Gold Action Rail under HUD
+  ctx.fillStyle = "#ff5500";
   ctx.fillRect(0, CEILING_Y - 4, CANVAS_WIDTH, 3);
-  ctx.shadowColor = "rgba(0, 240, 255, 0.6)";
-  ctx.shadowBlur = 8;
+  ctx.shadowColor = "rgba(255, 85, 0, 0.8)";
+  ctx.shadowBlur = 10;
 
   ctx.textBaseline = "middle";
 
   // --- Player 1 Info (Left) ---
   ctx.shadowBlur = 0;
-  ctx.fillStyle = "#38bdf8";
+  ctx.fillStyle = "#ff5500";
   ctx.font = "11px 'Press Start 2P', monospace";
   ctx.textAlign = "left";
   ctx.fillText("1P SCORE", 24, 18);
@@ -2013,25 +2199,25 @@ function drawHUD() {
 
   // --- Stage & Timer (Center) ---
   ctx.textAlign = "center";
-  ctx.fillStyle = "#ffe600";
+  ctx.fillStyle = "#ffd600";
   ctx.font = "12px 'Press Start 2P', monospace";
   ctx.fillText(`STAGE ${currentStageIndex + 1}`, CANVAS_WIDTH / 2, 18);
 
-  ctx.fillStyle = stageTimer <= 10 ? "#ef4444" : "#ffffff";
+  ctx.fillStyle = stageTimer <= 10 ? "#ff1744" : "#ffffff";
   ctx.font = "18px 'Press Start 2P', monospace";
   ctx.fillText(`TIME: ${stageTimer}`, CANVAS_WIDTH / 2, 42);
 
   // --- Player 2 or High Score (Right) ---
   ctx.textAlign = "right";
   if (twoPlayerMode) {
-    ctx.fillStyle = "#f43f5e";
+    ctx.fillStyle = "#00e676";
     ctx.font = "11px 'Press Start 2P', monospace";
     ctx.fillText("2P SCORE", CANVAS_WIDTH - 24, 18);
     ctx.fillStyle = "#ffffff";
     ctx.font = "16px 'Press Start 2P', monospace";
     ctx.fillText(`${player2.score}`, CANVAS_WIDTH - 24, 42);
   } else {
-    ctx.fillStyle = "#a855f7";
+    ctx.fillStyle = "#ffab00";
     ctx.font = "11px 'Press Start 2P', monospace";
     ctx.fillText("HIGH SCORE", CANVAS_WIDTH - 24, 18);
     ctx.fillStyle = "#ffffff";
@@ -2046,27 +2232,30 @@ function drawHUD() {
 // 12. MENUS & OVERLAY SCREENS
 // ==========================================
 function drawTitleScreen() {
-  ctx.fillStyle = "rgba(7, 9, 14, 0.9)";
+  ctx.fillStyle = "rgba(8, 9, 13, 0.92)";
   ctx.fillRect(0, CEILING_Y, CANVAS_WIDTH, FLOOR_Y - CEILING_Y);
 
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  ctx.fillStyle = "#00f0ff";
+  ctx.shadowColor = "rgba(255, 85, 0, 0.75)";
+  ctx.shadowBlur = 16;
+  ctx.fillStyle = "#ff3d00";
   ctx.font = "34px 'Press Start 2P', monospace";
   ctx.fillText("SUPA BANG BANG", CANVAS_WIDTH / 2, 200);
 
-  ctx.fillStyle = "#ff0055";
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#ffd600";
   ctx.font = "14px 'Press Start 2P', monospace";
   ctx.fillText("WORLD TOUR ARCADE", CANVAS_WIDTH / 2, 245);
 
-  ctx.fillStyle = "#ffe600";
+  ctx.fillStyle = "#ffab00";
   ctx.font = "16px 'Press Start 2P', monospace";
   if (Math.floor(Date.now() / 350) % 2 === 0) {
     ctx.fillText("TAP FIRE OR PRESS SPACE", CANVAS_WIDTH / 2, 340);
   }
 
-  ctx.fillStyle = "#94a3b8";
+  ctx.fillStyle = "#a1a1aa";
   ctx.font = "11px 'Press Start 2P', monospace";
   ctx.fillText(`MODE: ${twoPlayerMode ? "2 PLAYERS (CO-OP)" : "1 PLAYER"}`, CANVAS_WIDTH / 2, 410);
   ctx.fillText("JOYSTICK / ARROWS TO MOVE & CLIMB", CANVAS_WIDTH / 2, 445);
@@ -2075,22 +2264,22 @@ function drawTitleScreen() {
 
 function drawIntroBanner() {
   const stage = STAGES[currentStageIndex];
-  ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+  ctx.fillStyle = "rgba(18, 14, 20, 0.88)";
   ctx.fillRect(150, 240, 700, 160);
-  ctx.strokeStyle = "#38bdf8";
+  ctx.strokeStyle = "#ff5500";
   ctx.lineWidth = 3;
   ctx.strokeRect(150, 240, 700, 160);
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#ffe600";
+  ctx.fillStyle = "#ffd600";
   ctx.font = "18px 'Press Start 2P', monospace";
   ctx.fillText(stage.title, CANVAS_WIDTH / 2, 280);
 
-  ctx.fillStyle = "#e2e8f0";
+  ctx.fillStyle = "#f4f4f5";
   ctx.font = "12px 'Press Start 2P', monospace";
   ctx.fillText(stage.subtitle, CANVAS_WIDTH / 2, 330);
 
-  ctx.fillStyle = "#00f0ff";
+  ctx.fillStyle = "#00e676";
   ctx.font = "14px 'Press Start 2P', monospace";
   ctx.fillText("GET READY!", CANVAS_WIDTH / 2, 365);
 }
@@ -2141,7 +2330,7 @@ function drawVictoryScreen() {
   ctx.font = "32px 'Press Start 2P', monospace";
   ctx.fillText("CONGRATULATIONS!", CANVAS_WIDTH / 2, 240);
 
-  ctx.fillStyle = "#38bdf8";
+  ctx.fillStyle = "#00e676";
   ctx.font = "16px 'Press Start 2P', monospace";
   ctx.fillText("YOU COMPLETED THE WORLD TOUR!", CANVAS_WIDTH / 2, 300);
 
